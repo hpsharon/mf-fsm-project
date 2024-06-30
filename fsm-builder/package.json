@@ -1,0 +1,20 @@
+{
+  "name": "fsm-builder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "watch": "tsc-watch --onSuccess \"npm run build\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "tsc-watch": "^6.2.0",
+    "typescript": "^5.5.2"
+  }
+}
