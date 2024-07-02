@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node server/server.js",
     "build": "npm run build --prefix client",
-    "postinstall": "cd server && npm install && cd ../client && npm install && npm run build"
+    "postinstall": "cd fsm-server && npm install && cd ../react-app && npm install && npm run build"
   },
   "dependencies": {
     "concurrently": "^6.0.0"
