@@ -13,13 +13,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
     "@types/react": "^18.3.3",
     "copyfiles": "^2.4.1",
     "tsc-watch": "^6.2.0",
-    "typescript": "^5.5.2"
-  },
-  "dependencies": {
+    "typescript": "^5.5.2",
     "bootstrap": "^5.3.3"
   }
 }
