@@ -1,0 +1,13 @@
+{
+  "name": "my-fsm-project",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server/server.js",
+    "build": "npm run build --prefix client",
+    "postinstall": "npm install --prefix server && npm install --prefix client && npm run build --prefix client"
+  },
+  "dependencies": {
+    "concurrently": "^6.0.0"
+  }
+}
