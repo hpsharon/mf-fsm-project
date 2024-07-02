@@ -58,4 +58,6 @@ react-app/build/
 react-app/dist/
 react-app/*.tsbuildinfo
 
+fsm-server/node_modules/
+
 .idea/
