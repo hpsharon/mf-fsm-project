@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc && npm run copy-css",
+    "build": "npm install && tsc && npm run copy-css",
     "watch": "tsc-watch --onSuccess \"npm run build\"",
     "copy-css": "copyfiles -u 1 src/*.css dist"
   },
