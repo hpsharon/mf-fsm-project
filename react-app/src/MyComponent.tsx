@@ -1,81 +1,70 @@
 import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { FSMComponent } from 'fsm-builder';
-import { fsmConfig, fsmConfig2 } from './fsmConfig';
-import { createFSMStore, FSMStoreType } from './fsmStore';
+import { trafficLightConfig, vendingMachineConfig, jsPromiseConfig, retryMachineConfig } from './configs/fsmConfig';
+import { RetryMachineStore, TrafficLightStore, VendingMachineStore, JavaScriptPromiseStore } from './stores/machineStores';
 import 'bootstrap/dist/css/bootstrap.min.css';  // Import Bootstrap CSS
+import {FSMStore} from "./stores/fsmStore";  // Import custom CSS for additional styling
+
+const machineOptions = [
+  { label: 'Traffic Light', config: trafficLightConfig, initialState: 'Red', StoreClass: TrafficLightStore },
+  { label: 'Vending Machine', config: vendingMachineConfig, initialState: 'Idle', StoreClass: VendingMachineStore },
+  { label: 'JavaScript Promise', config: jsPromiseConfig, initialState: 'Pending', StoreClass: JavaScriptPromiseStore },
+  { label: 'Retry Machine', config: retryMachineConfig, initialState: 'Idle', StoreClass: RetryMachineStore }
+];
+
+interface Machine {
+  id: string;
+  label: string;
+  store: FSMStore;
+}
 
 const MyComponent: React.FC = observer(() => {
-  const [fsmStore1, setFSMStore1] = useState<FSMStoreType | null>(null);
-  const [fsmStore2, setFSMStore2] = useState<FSMStoreType | null>(null);
+  const [machines, setMachines] = useState<Machine[]>([]);
+  const [selectedMachine, setSelectedMachine] = useState(machineOptions[0]);
 
-  const handleTransition1 = (nextState: string) => {
-    if (fsmStore1) {
-      fsmStore1.transitionTo(nextState);
-    }
+  const handleAddMachine = () => {
+    const id = Math.random().toString(36).substring(7);
+    const store = new selectedMachine.StoreClass(id, selectedMachine.initialState, selectedMachine.config);
+    setMachines([...machines, { id, label: selectedMachine.label, store }]);
   };
 
-  const handleTransition2 = (nextState: string) => {
-    if (fsmStore2) {
-      fsmStore2.transitionTo(nextState);
-    }
-  };
-
-  const handleCreateSuccess1 = () => {
-    if (!fsmStore1) {
-      const id = Math.random().toString(36).substring(7);
-      const store = createFSMStore(id, 'idle');
-      setFSMStore1(store);
-    }
-  };
-
-  const handleCreateSuccess2 = () => {
-    if (!fsmStore2) {
-      const id = Math.random().toString(36).substring(7);
-      const store = createFSMStore(id, 'StepA');
-      setFSMStore2(store);
-    }
-  };
-
-  const handleReset1 = () => {
-    if (fsmStore1) {
-      fsmStore1.transitionTo('idle');
-    }
-  };
-
-  const handleReset2 = () => {
-    if (fsmStore2) {
-      fsmStore2.transitionTo('StepA');
+  const handleReset = (id: string) => {
+    const machine = machines.find(machine => machine.id === id);
+    if (machine) {
+      machine.store.reset();
     }
   };
 
   return (
     <div className="container">
+      <div className="row mb-3">
+        <div className="col-12">
+          <div className="d-flex">
+            <select className="form-select me-2" value={selectedMachine.label} onChange={(e) => setSelectedMachine(machineOptions.find(option => option.label === e.target.value)!)}>
+              {machineOptions.map(option => (
+                <option key={option.label} value={option.label}>{option.label}</option>
+              ))}
+            </select>
+            <button className="btn btn-primary" onClick={handleAddMachine}>Add Machine</button>
+          </div>
+        </div>
+      </div>
       <div className="row">
-        <div className="col-lg-4 col-md-6 mb-3">
-          <div className="border p-3">
-            <h2 className="my-3">FSM 1</h2>
-            <FSMComponent
-              config={fsmConfig}
-              currentState={fsmStore1?.currentState || 'idle'}
-              onTransition={handleTransition1}
-              onCreateSuccess={handleCreateSuccess1}
-              resetOptions={{ allowReset: true, onReset: handleReset1 }}
-            />
+        {machines.map(machine => (
+          <div key={machine.id} className="col-lg-4 col-md-6 mb-3">
+            <div className="border p-3">
+              <h2 className="my-3">{machine.label}</h2>
+              <FSMComponent
+                config={machine.store.config}
+                currentState={machine.store.currentState}
+                onTransition={(nextState: string) => machine.store.transitionTo(nextState)}
+                onCreateSuccess={() => machine.store.handleAutomaticTransitions()}
+                resetOptions={{ allowReset: true, onReset: () => handleReset(machine.id) }}
+              />
+            </div>
           </div>
-        </div>
-        <div className="col-lg-4 col-md-6 mb-3">
-          <div className="border p-3">
-            <h2 className="my-3">FSM 2</h2>
-            <FSMComponent
-              config={fsmConfig2}
-              currentState={fsmStore2?.currentState || 'StepA'}
-              onTransition={handleTransition2}
-              onCreateSuccess={handleCreateSuccess2}
-              resetOptions={{ allowReset: true, onReset: handleReset2 }}
-            />
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
