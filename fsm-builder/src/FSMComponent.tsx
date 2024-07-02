@@ -2,24 +2,24 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './FSMComponent.css';
 
-interface State {
+export interface State {
   name: string;
   metadata?: any;
 }
 
-interface Transition {
+export interface Transition {
   from: string;
   to: string;
   condition?: () => boolean;
 }
 
-interface FSMConfig {
+export interface FSMConfig {
   initialState: string;
   states: State[];
   transitions: Transition[];
 }
 
-interface FSMProps {
+export interface FSMProps {
   config: FSMConfig;
   currentState: string;
   onTransition: (nextState: string) => void;
