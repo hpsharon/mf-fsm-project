@@ -1,40 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
-import { FSMComponent } from 'fsm-builder';
-import { trafficLightConfig, vendingMachineConfig, jsPromiseConfig, retryMachineConfig } from './configs/fsmConfig';
-import { RetryMachineStore, TrafficLightStore, VendingMachineStore, JavaScriptPromiseStore } from './stores/machineStores';
-import 'bootstrap/dist/css/bootstrap.min.css';  // Import Bootstrap CSS
-import {FSMStore} from "./stores/fsmStore";  // Import custom CSS for additional styling
+import MachineCard from './MachineCard';
+import { trafficLightConfig, vendingMachineConfig, jsPromiseConfig, elevatorConfig, orderProcessingConfig, bookingSystemConfig, authenticationConfig, atmTransactionConfig } from './configs/fsmConfig';
+import { FSMStore } from './stores/fsmStore';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const machineOptions = [
-  { label: 'Traffic Light', config: trafficLightConfig, initialState: 'Red', StoreClass: TrafficLightStore },
-  { label: 'Vending Machine', config: vendingMachineConfig, initialState: 'Idle', StoreClass: VendingMachineStore },
-  { label: 'JavaScript Promise', config: jsPromiseConfig, initialState: 'Pending', StoreClass: JavaScriptPromiseStore },
-  { label: 'Retry Machine', config: retryMachineConfig, initialState: 'Idle', StoreClass: RetryMachineStore }
+  { label: 'Traffic Light', config: trafficLightConfig },
+  { label: 'Vending Machine', config: vendingMachineConfig },
+  { label: 'JavaScript Promise', config: jsPromiseConfig },
+  { label: 'Elevator System', config: elevatorConfig },
+  { label: 'Order Processing', config: orderProcessingConfig },
+  { label: 'Booking System', config: bookingSystemConfig },
+  { label: 'Authentication', config: authenticationConfig },
+  { label: 'ATM Transaction', config: atmTransactionConfig }
 ];
 
 interface Machine {
   id: string;
   label: string;
   store: FSMStore;
+  currentState: string;
 }
 
 const MyComponent: React.FC = observer(() => {
   const [machines, setMachines] = useState<Machine[]>([]);
   const [selectedMachine, setSelectedMachine] = useState(machineOptions[0]);
 
-  const handleAddMachine = () => {
+  const handleAddMachine = useCallback(() => {
     const id = Math.random().toString(36).substring(7);
-    const store = new selectedMachine.StoreClass(id, selectedMachine.initialState, selectedMachine.config);
-    setMachines([...machines, { id, label: selectedMachine.label, store }]);
-  };
+    const store = new FSMStore(id, selectedMachine.config);
+    const newMachine = { id, label: selectedMachine.label, store, currentState: selectedMachine.config.initialState };
+    setMachines(prevMachines => [...prevMachines, newMachine]);
+  }, [selectedMachine]);
 
-  const handleReset = (id: string) => {
-    const machine = machines.find(machine => machine.id === id);
-    if (machine) {
-      machine.store.reset();
-    }
-  };
+  const handleTransition = useCallback((id: string, nextState: string) => {
+    setMachines(prevMachines =>
+      prevMachines.map(machine =>
+        machine.id === id ? { ...machine, currentState: nextState } : machine
+      )
+    );
+  }, []);
+
+  const handleRemoveMachine = useCallback((id: string) => {
+    setMachines(prevMachines => prevMachines.filter(machine => machine.id !== id));
+  }, []);
 
   return (
     <div className="container">
@@ -52,18 +62,7 @@ const MyComponent: React.FC = observer(() => {
       </div>
       <div className="row">
         {machines.map(machine => (
-          <div key={machine.id} className="col-lg-4 col-md-6 mb-3">
-            <div className="border p-3">
-              <h2 className="my-3">{machine.label}</h2>
-              <FSMComponent
-                config={machine.store.config}
-                currentState={machine.store.currentState}
-                onTransition={(nextState: string) => machine.store.transitionTo(nextState)}
-                onCreateSuccess={() => machine.store.handleAutomaticTransitions()}
-                resetOptions={{ allowReset: true, onReset: () => handleReset(machine.id) }}
-              />
-            </div>
-          </div>
+          <MachineCard key={machine.id} machine={machine} onTransition={handleTransition} onRemove={handleRemoveMachine} />
         ))}
       </div>
     </div>

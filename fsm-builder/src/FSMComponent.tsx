@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';  // Import Bootstrap CSS
-import './FSMComponent.css';  // Import custom CSS for positioning
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './FSMComponent.css';
 
 export interface State {
   name: string;
@@ -10,98 +10,104 @@ export interface State {
 export interface Transition {
   from: string;
   to: string;
-  delay?: number; // Optional delay for transitions
+  delay?: number;
+  condition?: () => boolean;
 }
 
 export interface FSMConfig {
+  initialState: string;
   states: State[];
   transitions: Transition[];
-}
-
-export interface FSMResetOptions {
-  allowReset: boolean;
-  onReset: () => void;
 }
 
 export interface FSMProps {
   config: FSMConfig;
   currentState: string;
   onTransition: (nextState: string) => void;
-  onCreateSuccess?: () => void;
-  resetOptions: FSMResetOptions;
-  isAutomatic?: boolean; // Optional flag to make transitions automatic
 }
 
-const FSMComponent: React.FC<FSMProps> = (props: FSMProps) => {
-  const { config, currentState, onTransition, onCreateSuccess, resetOptions, isAutomatic } = props;
-  const [timeoutId, setTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(null);
+const FSMComponent: React.FC<FSMProps> = React.memo((props: FSMProps) => {
+  const { config, currentState, onTransition } = props;
+  const [timer, setTimer] = useState<number | null>(null);
+  const [nextStateName, setNextStateName] = useState<string | null>(null);
+  const intervalIdRef = useRef<number | null>(null);
+  const timeoutIdRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    if (onCreateSuccess) {
-      onCreateSuccess();
+  const clearTimers = useCallback(() => {
+    if (intervalIdRef.current !== null) {
+      clearInterval(intervalIdRef.current);
+      intervalIdRef.current = null;
     }
-    // Clean up timeout on unmount
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, [onCreateSuccess, timeoutId]);
-
-  useEffect(() => {
-    const transition = config.transitions.find(t => t.from === currentState && t.delay);
-    if (transition?.delay) {
-      const id = setTimeout(() => {
-        onTransition(transition.to);
-      }, transition.delay);
-      setTimeoutId(id);
+    if (timeoutIdRef.current !== null) {
+      clearTimeout(timeoutIdRef.current);
+      timeoutIdRef.current = null;
     }
-  }, [currentState, config.transitions, onTransition]);
+    setTimer(null);
+  }, []);
 
-  const handleTransition = (nextState: string) => {
-    const transition = config.transitions.find(t => t.from === currentState && t.to === nextState);
-    if (transition?.delay) {
-      setTimeout(() => {
-        onTransition(nextState);
-      }, transition.delay);
-    } else {
+  const startTransitionTimer = useCallback((delay: number, nextState: string) => {
+    setNextStateName(nextState); // Set the next state name before starting the timer
+    setTimer(delay / 1000); // Set the timer in seconds
+
+    timeoutIdRef.current = window.setTimeout(() => {
       onTransition(nextState);
+      clearTimers();
+    }, delay);
+  }, [onTransition, clearTimers]);
+
+  useEffect(() => {
+    const currentTransition = config.transitions.find(t => t.from === currentState && t.delay);
+    if (currentTransition && currentTransition.delay) {
+      startTransitionTimer(currentTransition.delay, currentTransition.to);
+    } else {
+      clearTimers();
     }
-  };
+
+    return () => {
+      clearTimers();
+    };
+  }, [currentState, config.transitions, startTransitionTimer, clearTimers]);
+
+  useEffect(() => {
+    if (timer !== null) {
+      intervalIdRef.current = window.setInterval(() => {
+        setTimer(prevTimer => (prevTimer && prevTimer > 0 ? prevTimer - 1 : null));
+      }, 1000);
+
+      return () => clearInterval(intervalIdRef.current as number);
+    }
+  }, [timer]);
 
   const isTransitionValid = (from: string, to: string): boolean => {
-    return config.transitions.some((t) => t.from === from && t.to === to);
+    return config.transitions.some(t => t.from === from && t.to === to);
   };
 
   return (
-    <div className="container">
-      <h3 className="my-3">Current State: <span className="badge bg-primary">{currentState}</span></h3>
-      <div>
-        <h4 className="my-3">All States:</h4>
-        <div className="d-flex flex-row flex-wrap">
-          {config.states.map((state) => (
-            <div key={state.name} className="p-2 state-container">
-              <button
-                className={`btn btn-${isTransitionValid(currentState, state.name) ? 'success' : 'secondary'} me-2`}
-                onClick={() => handleTransition(state.name)}
-                disabled={!isTransitionValid(currentState, state.name)}
-              >
-                {state.name}
-              </button>
-              {currentState === state.name && (
-                <span className="badge bg-primary current-badge">
-                  Current
-                </span>
-              )}
-            </div>
-          ))}
+    <div className="fsm-container card p-3">
+      <h3 className="current-state card-title">Current State: {currentState}</h3>
+      {timer !== null && nextStateName !== null && (
+        <div className="timer alert alert-info">
+          Next transition to <strong>{nextStateName}</strong> in: {timer} seconds
         </div>
-      </div>
-      {resetOptions.allowReset && (
-        <button className="btn btn-danger mt-3" onClick={resetOptions.onReset}>Reset</button>
       )}
+      <div>
+        <h4>All States:</h4>
+        <ul className="states-list list-group list-group-flush">
+          {config.states.map(state => (
+            <li key={state.name} className="list-group-item">
+              <button
+                onClick={() => onTransition(state.name)}
+                disabled={!isTransitionValid(currentState, state.name)}
+                className={`btn btn-block ${currentState === state.name ? 'btn-primary' : 'btn-secondary'}`}
+              >
+                {state.name} {currentState === state.name && '(Current)'}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
-};
+});
 
 export default FSMComponent;

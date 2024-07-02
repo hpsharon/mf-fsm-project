@@ -1,11 +1,24 @@
-.state-container {
-  position: relative;
+.fsm-container {
+  margin-bottom: 20px;
 }
 
-.current-badge {
-  position: absolute;
-  top: -15px !important;
-  left: 44% !important;
-  padding: 0.3em 0.5em;
-  transform: translateX(-50%);
+.current-state {
+  font-size: 1.2em;
+}
+
+.timer {
+  margin-top: 10px;
+}
+
+.states-list {
+  margin-top: 10px;
+}
+
+.states-list .list-group-item {
+  padding: 0;
+}
+
+.states-list .btn-block {
+  width: 100%;
+  text-align: left;
 }
