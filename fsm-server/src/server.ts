@@ -1,9 +1,12 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import path from 'path';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
-const port = 4000;
+const port = process.env.PORT || 4000;  // Use the port provided by Heroku or fallback to 4000
 
 interface Transition {
   from: string;
