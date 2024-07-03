@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import path from 'path';
 
@@ -33,27 +33,27 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client/build')));
 
 // API endpoints
-app.get('/api/someendpoint', (req, res) => {
+app.get('/api/someendpoint', (req: Request, res: Response) => {
   res.json({ message: 'Hello from the server!' });
 });
 
 // The "catchall" handler: for any request that doesn't match one above, send back React's index.html file.
-app.get('*', (req, res) => {
+app.get('*', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
 });
 
-app.get('/machines', (req, res) => {
+app.get('/machines', (req: Request, res: Response) => {
   res.json(machines);
 });
 
-app.post('/machines', (req, res) => {
+app.post('/machines', (req: Request, res: Response) => {
   const { id, label, config } = req.body;
   const newMachine: Machine = { id, label, config, currentState: config.initialState };
   machines.push(newMachine);
   res.status(201).json(newMachine);
 });
 
-app.post('/machines/:id/transition', (req, res) => {
+app.post('/machines/:id/transition', (req: Request, res: Response) => {
   const { id } = req.params;
   const { nextState } = req.body;
 
@@ -66,7 +66,7 @@ app.post('/machines/:id/transition', (req, res) => {
   }
 });
 
-app.delete('/machines/:id', (req, res) => {
+app.delete('/machines/:id', (req: Request, res: Response) => {
   const { id } = req.params;
   machines = machines.filter(machine => machine.id !== id);
   res.status(204).send();
