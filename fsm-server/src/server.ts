@@ -40,10 +40,6 @@ app.get('/api/someendpoint', (req: Request, res: Response) => {
   res.json({ message: 'Hello from the server!' });
 });
 
-// The "catchall" handler: for any request that doesn't match one above, send back React's index.html file.
-app.get('*', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../../react-app/build', 'index.html'));
-});
 
 app.get('/machines', (req: Request, res: Response) => {
   res.json(machines);
@@ -77,4 +73,9 @@ app.delete('/machines/:id', (req: Request, res: Response) => {
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
+});
+
+// The "catchall" handler: for any request that doesn't match one above, send back React's index.html file.
+app.get('*', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../../react-app/build', 'index.html'));
 });
