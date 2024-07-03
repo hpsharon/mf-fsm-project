@@ -133,7 +133,7 @@ export const atmTransactionConfig:FSMConfig = {
     { from: 'Idle', to: 'CardInserted' },
     { from: 'CardInserted', to: 'PinEntered' }, // 0.5 second delay for entering the PIN
     { from: 'PinEntered', to: 'SelectingTransaction' }, // 1 second delay for selecting transaction
-    { from: 'SelectingTransaction', to: 'TransactionInProgress', delay: 500 }, // 0.5 second delay for processing transaction
+    { from: 'SelectingTransaction', to: 'TransactionInProgress', delay: 2000 }, // 2 second delay for processing transaction
     { from: 'TransactionInProgress', to: 'TransactionComplete', delay: 3000 }, // 3 seconds delay for completing transaction
     { from: 'TransactionComplete', to: 'CardEjected', delay: 2000 }, // 2 seconds delay for ejecting the card
     { from: 'CardEjected', to: 'Idle', delay: 1000 }
