@@ -33,7 +33,7 @@ app.use(cors());
 app.use(express.json());
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../client/build')));
+app.use(express.static(path.join(__dirname, '../react-app/build')));
 
 // API endpoints
 app.get('/api/someendpoint', (req: Request, res: Response) => {
@@ -42,7 +42,7 @@ app.get('/api/someendpoint', (req: Request, res: Response) => {
 
 // The "catchall" handler: for any request that doesn't match one above, send back React's index.html file.
 app.get('*', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+  res.sendFile(path.join(__dirname, '../react-app/build', 'index.html'));
 });
 
 app.get('/machines', (req: Request, res: Response) => {
