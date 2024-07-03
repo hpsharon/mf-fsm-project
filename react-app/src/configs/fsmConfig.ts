@@ -10,11 +10,11 @@ export const trafficLightConfig: FSMConfig = {
     { name: 'YellowAfterGreen' }
   ],
   transitions: [
-    { from: 'Red', to: 'YellowRed'  },
-    { from: 'YellowRed', to: 'Green' },
-    { from: 'Green', to: 'BlinkGreen' },
-    { from: 'BlinkGreen', to: 'YellowAfterGreen' },
-    { from: 'YellowAfterGreen', to: 'Red' }
+    { from: 'Red', to: 'YellowRed', delay: 5000 },
+    { from: 'YellowRed', to: 'Green', delay: 2000 },
+    { from: 'Green', to: 'BlinkGreen', delay: 5000 },
+    { from: 'BlinkGreen', to: 'YellowAfterGreen', delay: 2000 },
+    { from: 'YellowAfterGreen', to: 'Red', delay: 2000 }
   ]
 };
 
@@ -29,8 +29,8 @@ export const vendingMachineConfig: FSMConfig = {
   transitions: [
     { from: 'Idle', to: 'OneCoin' },
     { from: 'OneCoin', to: 'TwoCoins' },
-    { from: 'TwoCoins', to: 'Vending' },
-    { from: 'Vending', to: 'Idle' }
+    { from: 'TwoCoins', to: 'Vending', delay: 2000 },
+    { from: 'Vending', to: 'Idle', delay: 2000 }
   ]
 };
 
@@ -131,11 +131,11 @@ export const atmTransactionConfig:FSMConfig = {
   ],
   transitions: [
     { from: 'Idle', to: 'CardInserted' },
-    { from: 'CardInserted', to: 'PinEntered' },
-    { from: 'PinEntered', to: 'SelectingTransaction' },
-    { from: 'SelectingTransaction', to: 'TransactionInProgress' },
-    { from: 'TransactionInProgress', to: 'TransactionComplete' },
-    { from: 'TransactionComplete', to: 'CardEjected' },
-    { from: 'CardEjected', to: 'Idle' }
+    { from: 'CardInserted', to: 'PinEntered' }, // 0.5 second delay for entering the PIN
+    { from: 'PinEntered', to: 'SelectingTransaction' }, // 1 second delay for selecting transaction
+    { from: 'SelectingTransaction', to: 'TransactionInProgress', delay: 500 }, // 0.5 second delay for processing transaction
+    { from: 'TransactionInProgress', to: 'TransactionComplete', delay: 3000 }, // 3 seconds delay for completing transaction
+    { from: 'TransactionComplete', to: 'CardEjected', delay: 2000 }, // 2 seconds delay for ejecting the card
+    { from: 'CardEjected', to: 'Idle', delay: 1000 }
   ]
 };

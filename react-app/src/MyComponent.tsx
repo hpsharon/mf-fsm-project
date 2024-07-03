@@ -7,14 +7,14 @@ import { FSMStore } from './stores/fsmStore';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const machineOptions = [
-  // { label: 'Traffic Light', config: trafficLightConfig },
-  // { label: 'Vending Machine', config: vendingMachineConfig },
+  { label: 'Traffic Light', config: trafficLightConfig },
+  { label: 'Vending Machine', config: vendingMachineConfig },
   { label: 'JavaScript Promise', config: jsPromiseConfig },
   { label: 'Elevator System', config: elevatorConfig },
   { label: 'Order Processing', config: orderProcessingConfig },
   { label: 'Booking System', config: bookingSystemConfig },
   { label: 'Authentication', config: authenticationConfig },
-  // { label: 'ATM Transaction', config: atmTransactionConfig }
+  { label: 'ATM Transaction', config: atmTransactionConfig }
 ];
 
 interface Machine {
