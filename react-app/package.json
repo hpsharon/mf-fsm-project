@@ -11,6 +11,7 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "bootstrap": "^5.3.3",
+    "fsm-builder": "^1.0.1",
     "mobx": "^6.12.4",
     "mobx-react-lite": "^4.0.7",
     "react": "^18.3.1",
@@ -23,7 +24,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test FSMStore fsmStore.test.ts",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -43,5 +44,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@types/jest": "^27.5.2",
+    "jest": "^27.5.1"
   }
 }
