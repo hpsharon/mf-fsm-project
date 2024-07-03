@@ -1,1 +1,1 @@
-web: node server/server.js
+web: node fsm-server/dist/server.js
