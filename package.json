@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node server/server.js",
+    "start": "node fsm-server/dist/server.js",
     "build": "npm run build --prefix react-app",
-    "postinstall": "cd fsm-server && npm install && cd ../fsm-builder && npm install && npm run build && cd ../react-app && npm install && npm run build"
+    "postinstall": "cd fsm-server && npm install && npm run build && cd ../fsm-builder && npm install && npm run build && cd ../react-app && npm install && npm run build"
   },
   "devDependencies": {
     "typescript": "^4.0.0"
