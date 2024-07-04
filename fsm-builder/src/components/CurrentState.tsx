@@ -4,7 +4,7 @@ interface CurrentStateProps {
   currentState: string;
 }
 
-const CurrentState: React.FC<CurrentStateProps> = ({ currentState }) => {
+const CurrentState: React.FC<CurrentStateProps> = ({ currentState }: CurrentStateProps) => {
   return <h3 className="current-state card-title">Current State: {currentState}</h3>;
 };
 

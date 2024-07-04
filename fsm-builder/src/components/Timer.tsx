@@ -5,7 +5,7 @@ interface TimerProps {
   nextStateName: string | null;
 }
 
-const Timer: React.FC<TimerProps> = ({ timer, nextStateName }) => {
+const Timer: React.FC<TimerProps> = ({ timer, nextStateName }:TimerProps) => {
   return (
     <>
       {timer !== null && nextStateName !== null && (

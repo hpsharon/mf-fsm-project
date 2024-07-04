@@ -15,7 +15,7 @@ const StateList: React.FC<StateListProps> = ({
                                                timer,
                                                onTransition,
                                                isTransitionValid
-                                             }) => {
+                                             }:StateListProps) => {
   return (
     <div>
       <h4>All States:</h4>

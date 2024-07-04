@@ -22,7 +22,7 @@ const FSMContainer: React.FC<FSMContainerProps> = ({
                                                      nextStateName,
                                                      onTransition,
                                                      isTransitionValid
-                                                   }) => {
+                                                   }: FSMContainerProps) => {
   return (
     <div className="fsm-container card p-3">
       <CurrentState currentState={currentState} />

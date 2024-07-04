@@ -74,7 +74,7 @@ const FSMComponent: React.FC<FSMProps> = React.memo((props: FSMProps) => {
   useEffect(() => {
     if (timer !== null) {
       intervalIdRef.current = window.setInterval(() => {
-        setTimer(prevTimer => {
+        setTimer((prevTimer:number|null) => {
           if (prevTimer && prevTimer > 1) {
             return prevTimer - 1;
           } else {
