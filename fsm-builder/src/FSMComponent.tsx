@@ -1,29 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { FSMProps } from "./Types/FSMTypes";
 import './FSMComponent.css';
+import FSMContainer from "./components/FSMContainer";
 
-export interface State {
-  name: string;
-  metadata?: any;
-}
-
-export interface Transition {
-  from: string;
-  to: string;
-  delay?: number; // Delay in milliseconds
-}
-
-export interface FSMConfig {
-  initialState: string;
-  states: State[];
-  transitions: Transition[];
-}
-
-export interface FSMProps {
-  config: FSMConfig;
-  currentState: string;
-  onTransition: (nextState: string) => void;
-}
 
 /**
  * FSMComponent - A React component to visualize and manage a finite state machine.
@@ -121,30 +101,14 @@ const FSMComponent: React.FC<FSMProps> = React.memo((props: FSMProps) => {
   };
 
   return (
-    <div className="fsm-container card p-3">
-      <h3 className="current-state card-title">Current State: {currentState}</h3>
-      {timer !== null && nextStateName !== null && (
-        <div className="timer alert alert-info">
-          Next transition to <strong>{nextStateName}</strong> in: {timer} seconds
-        </div>
-      )}
-      <div>
-        <h4>All States:</h4>
-        <ul className="states-list list-group list-group-flush">
-          {config.states.map(state => (
-            <li key={state.name} className="list-group-item">
-              <button
-                onClick={() => onTransition(state.name)}
-                disabled={timer !== null || !isTransitionValid(currentState, state.name)}
-                className={`btn btn-block ${currentState === state.name ? 'btn-primary' : 'btn-secondary'}`}
-              >
-                {state.name} {currentState === state.name && '(Current)'}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+    <FSMContainer
+      config={config}
+      currentState={currentState}
+      timer={timer}
+      nextStateName={nextStateName}
+      onTransition={onTransition}
+      isTransitionValid={isTransitionValid}
+    />
   );
 });
 
