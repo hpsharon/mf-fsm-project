@@ -18,9 +18,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0"
-  },
-  "devDependencies": {
+    "@types/react-dom": "^18.3.0",
     "bootstrap": "^5.3.3",
     "copyfiles": "^2.4.1",
     "tsc-watch": "^6.2.0",
