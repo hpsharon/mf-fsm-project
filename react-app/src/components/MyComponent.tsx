@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
+import { produce } from 'immer';
+import { FSMConfig } from 'fsm-builder';
 import MachineCard from './MachineCard/MachineCard';
 import MachineSelector from './MachineSelector';
-import { FSMConfig } from 'fsm-builder';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { trafficLightConfig, vendingMachineConfig, jsPromiseConfig, elevatorConfig, orderProcessingConfig, bookingSystemConfig, authenticationConfig, atmTransactionConfig } from '../configs/fsmConfig';
 import { FSMStore } from '../stores/fsmStore';
 import { fetchMachines, addMachine, transitionMachine, removeMachine } from '../services/apiService';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 const machineOptions = [
   { label: 'Traffic Light', config: trafficLightConfig },
@@ -59,22 +61,16 @@ const MyComponent: React.FC = observer(() => {
   }, [selectedMachine]);
 
   const handleTransition = useCallback((id: string, nextState: string) => {
-    const machine = machines.find(m => m.id === id);
-    if (!machine) return;
-
-    const transition = machine.store.config.transitions.find((t: any) => t.from === machine.currentState && t.to === nextState);
-
-    if (transition) {
-      transitionMachine(id, nextState)
-        .then((updatedMachine: Machine) => {
-          setMachines(prevMachines =>
-            prevMachines.map(machine =>
-              machine.id === id ? { ...machine, currentState: updatedMachine.currentState } : machine
-            )
-          );
-        });
-    }
-  }, [machines]);
+    transitionMachine(id, nextState)
+      .then(updatedMachine => {
+        setMachines(produce(draft => {
+          const machine = draft.find(m => m.id === id);
+          if (machine) {
+            machine.currentState = updatedMachine.currentState;
+          }
+        }));
+      });
+  }, []);
 
   const handleRemoveMachine = useCallback((id: string) => {
     removeMachine(id)

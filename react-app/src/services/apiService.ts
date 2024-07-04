@@ -1,5 +1,7 @@
+const API_URL = 'http://localhost:4000';
+
 export const fetchMachines = async () => {
-  const response = await fetch('http://localhost:4000/machines');
+  const response = await fetch(`${API_URL}/machines`);
   if (!response.ok) {
     throw new Error('Failed to fetch machines');
   }
@@ -7,7 +9,7 @@ export const fetchMachines = async () => {
 };
 
 export const addMachine = async (id: string, label: string, config: any, initialState: string) => {
-  const response = await fetch('http://localhost:4000/machines', {
+  const response = await fetch(`${API_URL}/machines`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id, label, config, currentState: initialState })
@@ -19,7 +21,7 @@ export const addMachine = async (id: string, label: string, config: any, initial
 };
 
 export const transitionMachine = async (id: string, nextState: string) => {
-  const response = await fetch(`http://localhost:4000/machines/${id}/transition`, {
+  const response = await fetch(`${API_URL}/machines/${id}/transition`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ nextState })
@@ -31,7 +33,7 @@ export const transitionMachine = async (id: string, nextState: string) => {
 };
 
 export const removeMachine = async (id: string) => {
-  const response = await fetch(`http://localhost:4000/machines/${id}`, {
+  const response = await fetch(`${API_URL}/machines/${id}`, {
     method: 'DELETE'
   });
   if (!response.ok) {
