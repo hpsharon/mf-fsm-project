@@ -17,8 +17,8 @@ This project is a Finite State Machine (FSM) builder for React.js applications. 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/my-fsm-project.git
-   cd my-fsm-project
+   git clone https://github.com/hpsharon/mf-fsm-project
+   cd mf-fsm-project
    ```
 
 2. Install dependencies:
