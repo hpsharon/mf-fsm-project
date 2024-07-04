@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node fsm-server/dist/server.js",
-    "build": "npm run build --prefix react-app",
+    "build": "npm run install:client && npm run build --prefix react-app",
     "install:all": "npm install && npm run install:builder && npm run install:server && npm run install:client",
     "install:builder": "cd fsm-builder && npm install",
     "install:server": "cd fsm-server && npm install",
