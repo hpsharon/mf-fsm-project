@@ -12,7 +12,6 @@ interface Transition {
   from: string;
   to: string;
   delay?: number; // Delay in milliseconds
-  condition?: () => boolean;
 }
 
 interface FSMConfig {
@@ -35,11 +34,6 @@ app.use(express.json());
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, '../../react-app/build')));
-
-// API endpoints
-app.get('/api/someendpoint', (req: Request, res: Response) => {
-  res.json({ message: 'Hello from the server!' });
-});
 
 
 app.get('/machines', (req: Request, res: Response) => {
