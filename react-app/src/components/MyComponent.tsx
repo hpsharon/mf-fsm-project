@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
-import MachineCard from './MachineCard';
+import MachineCard from './MachineCard/MachineCard';
+import MachineSelector from './MachineSelector';
 import { FSMConfig } from 'fsm-builder';
-import { trafficLightConfig, vendingMachineConfig, jsPromiseConfig, elevatorConfig, orderProcessingConfig, bookingSystemConfig, authenticationConfig, atmTransactionConfig } from './configs/fsmConfig';
-import { FSMStore } from './stores/fsmStore';
+import { trafficLightConfig, vendingMachineConfig, jsPromiseConfig, elevatorConfig, orderProcessingConfig, bookingSystemConfig, authenticationConfig, atmTransactionConfig } from '../configs/fsmConfig';
+import { FSMStore } from '../stores/fsmStore';
+import { fetchMachines, addMachine, transitionMachine, removeMachine } from '../services/apiService';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const machineOptions = [
@@ -30,9 +32,8 @@ const MyComponent: React.FC = observer(() => {
   const [selectedMachine, setSelectedMachine] = useState(machineOptions[0]);
 
   useEffect(() => {
-    fetch('http://localhost:4000/machines')
-      .then(res => res.json())
-      .then(data => {
+    fetchMachines()
+      .then((data: Machine[]) => {
         const loadedMachines = data.map((machine: Machine) => {
           const store = new FSMStore(machine.id, machine.config);
           store.transitionTo(machine.currentState);
@@ -43,7 +44,7 @@ const MyComponent: React.FC = observer(() => {
         });
         setMachines(loadedMachines);
       })
-      .catch(error => {
+      .catch((error:any) => {
         console.error('Error loading machines:', error);
       });
   }, []);
@@ -53,11 +54,7 @@ const MyComponent: React.FC = observer(() => {
     const store = new FSMStore(id, selectedMachine.config);
     const newMachine: Machine = { id, label: selectedMachine.label, config: selectedMachine.config, store, currentState: selectedMachine.config.initialState };
 
-    fetch('http://localhost:4000/machines', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, label: selectedMachine.label, config: selectedMachine.config, currentState: selectedMachine.config.initialState })
-    }).then(res => res.json())
+    addMachine(id, selectedMachine.label, selectedMachine.config, selectedMachine.config.initialState)
       .then(() => setMachines(prevMachines => [...prevMachines, newMachine]));
   }, [selectedMachine]);
 
@@ -68,12 +65,8 @@ const MyComponent: React.FC = observer(() => {
     const transition = machine.store.config.transitions.find((t: any) => t.from === machine.currentState && t.to === nextState);
 
     if (transition) {
-      fetch(`http://localhost:4000/machines/${id}/transition`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nextState })
-      }).then(res => res.json())
-        .then(updatedMachine => {
+      transitionMachine(id, nextState)
+        .then((updatedMachine: Machine) => {
           setMachines(prevMachines =>
             prevMachines.map(machine =>
               machine.id === id ? { ...machine, currentState: updatedMachine.currentState } : machine
@@ -84,25 +77,22 @@ const MyComponent: React.FC = observer(() => {
   }, [machines]);
 
   const handleRemoveMachine = useCallback((id: string) => {
-    fetch(`http://localhost:4000/machines/${id}`, {
-      method: 'DELETE'
-    }).then(() => {
-      setMachines(prevMachines => prevMachines.filter(machine => machine.id !== id));
-    });
+    removeMachine(id)
+      .then(() => {
+        setMachines(prevMachines => prevMachines.filter(machine => machine.id !== id));
+      });
   }, []);
 
   return (
     <div className="container">
       <div className="row mb-3">
         <div className="col-12">
-          <div className="d-flex">
-            <select className="form-select me-2" value={selectedMachine.label} onChange={(e) => setSelectedMachine(machineOptions.find(option => option.label === e.target.value)!)}>
-              {machineOptions.map(option => (
-                <option key={option.label} value={option.label}>{option.label}</option>
-              ))}
-            </select>
-            <button className="btn btn-primary" onClick={handleAddMachine}>Add Machine</button>
-          </div>
+          <MachineSelector
+            machineOptions={machineOptions}
+            selectedMachine={selectedMachine}
+            setSelectedMachine={setSelectedMachine}
+            handleAddMachine={handleAddMachine}
+          />
         </div>
       </div>
       <div className="row">

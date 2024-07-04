@@ -1,5 +1,6 @@
 import React from 'react';
 import { FSMComponent } from 'fsm-builder';
+import RemoveButton from "./RemoveButton";
 
 interface Machine {
   id: string;
@@ -17,13 +18,7 @@ interface MachineCardProps {
 const MachineCard: React.FC<MachineCardProps> = React.memo(({ machine, onTransition, onRemove }) => (
   <div className="col-lg-4 col-md-6 mb-3 position-relative">
     <div className="border p-3">
-      <button
-        className="btn btn-danger btn-sm position-absolute"
-        style={{ top: 10, right: 10 }}
-        onClick={() => onRemove(machine.id)}
-      >
-        X
-      </button>
+      <RemoveButton onRemove={() => onRemove(machine.id)} />
       <h2 className="my-3">{machine.label}</h2>
       <FSMComponent
         config={machine.store.config}
