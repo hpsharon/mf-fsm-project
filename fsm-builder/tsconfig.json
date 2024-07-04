@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ES5",
-    "module": "CommonJS",
-    "lib": ["dom", "es2015", "es2017"],
-    "allowJs": true,
+    "target": "ES6",
+    "module": "commonjs",
+    "lib": ["dom", "es2017"],
     "jsx": "react",
     "declaration": true,
     "outDir": "dist",
@@ -13,5 +12,5 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*"],
+  "include": ["src"]
 }
