@@ -10,7 +10,7 @@
     "install:server": "cd fsm-server && npm install",
     "install:client": "cd react-app && npm install",
     "build:all": "npm run build:builder && npm run build:server && npm run build:client",
-    "build:builder": "cd fsm-builder &&  && npm install && npm run build",
+    "build:builder": "cd fsm-builder && npm install && npm run build",
     "build:server": "cd fsm-server && npm install && npm run build",
     "build:client": "cd react-app && npm install && npm run build",
     "dev": "concurrently \"npm run watch:builder\" \"npm run dev:server\" \"npm run start:client\"",
