@@ -23,7 +23,7 @@ This project is a Finite State Machine (FSM) builder for React.js applications. 
 
 2. Install dependencies:
    ```bash
-   npm install
+   npm run install:all
    ```
 
 3. Start the project for developing:

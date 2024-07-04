@@ -16,8 +16,7 @@
     "dev": "concurrently \"npm run watch:builder\" \"npm run dev:server\" \"npm run start:client\"",
     "watch:builder": "cd fsm-builder && npm run watch",
     "dev:server": "cd fsm-server && npm run dev",
-    "start:client": "cd react-app && npm start",
-    "postinstall": "npm run build:all"
+    "start:client": "cd react-app && npm start"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
