@@ -5,9 +5,22 @@
   "scripts": {
     "start": "node fsm-server/dist/server.js",
     "build": "npm run build --prefix react-app",
-    "postinstall": "cd fsm-server && npm install && npm run build && cd ../fsm-builder && npm install && npm run build && cd ../react-app && npm install && npm run build"
+    "install:all": "npm install && npm run install:builder && npm run install:server && npm run install:client",
+    "install:builder": "cd fsm-builder && npm install",
+    "install:server": "cd fsm-server && npm install",
+    "install:client": "cd react-app && npm install",
+    "build:all": "npm run build:builder && npm run build:server && npm run build:client",
+    "build:builder": "cd fsm-builder && npm run build",
+    "build:server": "cd fsm-server && npm run build",
+    "build:client": "cd react-app && npm run build",
+    "dev": "concurrently \"npm run watch:builder\" \"npm run dev:server\" \"npm run start:client\"",
+    "watch:builder": "cd fsm-builder && npm run watch",
+    "dev:server": "cd fsm-server && npm run dev",
+    "start:client": "cd react-app && npm start",
+    "postinstall": "npm run build:all"
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "typescript": "^4.0.0"
   }
 }
